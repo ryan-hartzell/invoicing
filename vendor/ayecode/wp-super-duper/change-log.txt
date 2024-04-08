@@ -1,27 +1,3 @@
-= 1.1.34 - 2024-02-15 =
-* Post Author support added in Block Visibility - ADDED
-
-= 1.1.33 - 2024-01-25 =
-* Escape new line characters from option label - FIXED
-
-= 1.1.32 - 2023-12-14 =
-* Update textdomain - CHANGED
-* Escape placeholder t o prevent JS error - FIXED
-* Site editor sidebar navigation auto closed - FIXED
-
-= 1.1.31 =
-* Detect Bricks builder preview - ADDED
-
-= 1.1.30 =
-* element_require condition is not working with checkbox - FIXED
-
-= 1.1.29 =
-* Show device type name with title for multi-device option setting - CHANGED
-* element_require condition is not working with checkbox - FIXED
-
-= 1.1.28 =
-* Shortcode button added twice in the page content editor - FIXED
-
 = 1.1.27 =
 * Tablet padding option values are not working properly - FIXED
 

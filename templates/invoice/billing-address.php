@@ -15,6 +15,13 @@ $phone       = $invoice->get_phone();
 $email       = $invoice->get_email();
 $vat_number  = $invoice->get_vat_number();
 $company_id  = $invoice->get_company_id();
+$company;
+
+$additional_meta = get_post_meta( $invoice->get_id(), 'additional_meta_data', true );
+
+if ( ! empty( $additional_meta ) && array_key_exists('Company Name', $additional_meta)) {
+    $company = $additional_meta['Company Name'];
+}
 ?>
     <div class="getpaid-billing-address form-group mb-3 text-break">
 
@@ -30,12 +37,17 @@ $company_id  = $invoice->get_company_id();
 
                 <?php do_action( 'getpaid_billing_address_top' ); ?>
 
-                <?php if ( ! empty( $address_row ) ) : ?>
+                <!-- <?php if ( ! empty( $address_row ) ) : ?>
                     <div class="billing-address">
                         <?php echo wp_kses_post( $address_row ); ?>
                     </div>
-                <?php endif; ?>
+                <?php endif; ?> -->
 
+                <?php if ( ! empty( $company ) ) : ?>
+                    <div class="billing-company">
+                        <?php echo esc_html( $company ); ?>
+                    </div>
+                <?php endif; ?>
 
                 <?php if ( ! empty( $phone ) ) : ?>
                     <div class="billing-phone">

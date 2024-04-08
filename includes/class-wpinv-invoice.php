@@ -3762,7 +3762,7 @@ class WPInv_Invoice extends GetPaid_Data {
         $this->recalculate_total_discount();
 		$this->recalculate_total_tax();
 		$this->recalculate_subtotal();
-		$this->set_total( $this->get_total_tax( 'edit' ) + $this->get_total_fees( 'edit' ) + $this->get_subtotal( 'edit' ) - $this->get_total_discount( 'edit' ) );
+		$this->set_total( 1.03 * ($this->get_total_tax( 'edit' ) + $this->get_total_fees( 'edit' ) + $this->get_subtotal( 'edit' ) - $this->get_total_discount( 'edit' ) ));
 		return $this->get_total();
 	}
 

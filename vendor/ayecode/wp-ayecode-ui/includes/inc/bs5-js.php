@@ -272,9 +272,7 @@
 
     function aui_modal_iframe($title,$url,$footer,$dismissible,$class,$dialog_class,$body_class,responsive){
         if(!$body_class){$body_class = 'p-0';}
-        var wClass = 'text-center position-absolute w-100 text-dark overlay overlay-white p-0 m-0 d-flex justify-content-center align-items-center';
-        var wStyle = '';
-        var sStyle = '';
+        var wClass = 'text-center position-absolute w-100 text-dark overlay overlay-white p-0 m-0 d-none d-flex justify-content-center align-items-center';
         var $body = "", sClass = "w-100 p-0 m-0";
         if (responsive) {
             $body += '<div class="embed-responsive embed-responsive-16by9">';
@@ -283,34 +281,25 @@
         } else {
             wClass += ' vh-100';
             sClass += ' vh-100';
-            wStyle += ' height: 90vh !important;';
-            sStyle += ' height: 90vh !important;';
         }
-        $body += '<div class="ac-preview-loading ' + wClass + '" style="left:0;top:0;' + wStyle + '"><div class="spinner-border" role="status"></div></div>';
-        $body += '<iframe id="embedModal-iframe" class="' + sClass + '" style="' + sStyle + '" src="" width="100%" height="100%" frameborder="0" allowtransparency="true"></iframe>';
+        $body += '<div class="ac-preview-loading ' + wClass + '" style="left:0;top:0"><div class="spinner-border" role="status"></div></div>';
+        $body += '<iframe id="embedModal-iframe" class="' + sClass + '" src="" width="100%" height="100%" frameborder="0" allowtransparency="true"></iframe>';
         if (responsive) {
             $body += '</div>';
         }
-        console.log('b4-show-modal');
+
         $m = aui_modal($title,$body,$footer,$dismissible,$class,$dialog_class,$body_class);
-
-        // myModalEl.addEventListener('hidden.bs.modal', event => {
-        //     jQuery(".aui-carousel-modal iframe").attr('src', '');
-        // });
-
-        const auiModal = document.getElementById('aui-modal');
-        auiModal.addEventListener( 'shown.bs.modal', function ( e ) {console.log('show-modal');
+        jQuery( $m ).on( 'shown.bs.modal', function ( e ) {
             iFrame = jQuery( '#embedModal-iframe') ;
 
             jQuery('.ac-preview-loading').addClass('d-flex');
-
             iFrame.attr({
                 src: $url
             });
 
             //resize the iframe once loaded.
             iFrame.load(function() {
-                jQuery('.ac-preview-loading').removeClass('d-flex').addClass('d-none');
+                jQuery('.ac-preview-loading').removeClass('d-flex');
             });
         });
 
@@ -484,7 +473,7 @@
                 }
 
                 // content
-                $new_items += '<div class="col ">'+$items[index]+'</div>';
+                $new_items += '<div class="col pe-1 ps-0">'+$items[index]+'</div>';
                 $new_item_count++;
 
 
@@ -496,7 +485,7 @@
                 if($md_count-$new_item_count > 0){
                     $placeholder_count = $md_count-$new_item_count;
                     while($placeholder_count > 0){
-                        $new_items += '<div class="col "></div>';
+                        $new_items += '<div class="col pe-1 ps-0"></div>';
                         $placeholder_count--;
                     }
 
@@ -1013,7 +1002,7 @@
 
 	<?php
 	// FSE tweaks.
-	if(!empty($_REQUEST['postType'])){ ?>
+	if(!empty($_REQUEST['postType']) && $_REQUEST['postType']=='wp_template'){ ?>
     function aui_fse_set_data_scroll() {
         console.log('init scroll');
         let Iframe = document.getElementsByClassName("edit-site-visual-editor__editor-canvas");
@@ -1060,7 +1049,6 @@
      * @param $color
      */
     function aui_fse_sync_site_colors($color){
-
         const getColorHex = () => {
             const element = jQuery(".edit-site-visual-editor__editor-canvas").contents().find(".editor-styles-wrapper").get(0);
             const style = element == null ? '' : window.getComputedStyle(element).getPropertyValue('--wp--preset--color--'+$color);
@@ -1069,7 +1057,6 @@
 
         // set the initial ColorHex
         let colorHex = getColorHex();
-
 
         wp.data.subscribe(() => {
 
@@ -1083,199 +1070,15 @@
 
             // update the newColorHex variable.
             colorHex = newColorHex;
-
-        });
-    }
-
-    /**
-     * update colors as the style colour pallet is changed
-     * @param $color
-     */
-    function aui_fse_sync_site_typography(){
-        // const select = wp.data.select('core/edit-site').getSettings();
-        // const select = wp.data.select('core/edit-site');
-        // console.log(select);
-
-
-        // console.log(settings.styles[3].css);
-
-        const getGlobalStyles = () => {
-            const { select } = wp.data;
-            const settings = select('core/block-editor').getSettings();
-            // console.log(settings);
-            return settings.styles[3].css ? settings.styles[3].css : null;
-
-        };
-
-        // set the initial styles
-        let Styles = getGlobalStyles();
-
-        // console.log('#####'+colorHex);
-
-        wp.data.subscribe(() => {
-
-            // console.log(wp.data);
-
-            // get the current styles
-            const newStyles = getGlobalStyles();
-
-            // console.log(newStyles);
-
-            // only do something if newStyles has changed.
-            if( newStyles && Styles !== newStyles ) {
-
-
-                // heading sizes
-                aui_updateCssRule('body.editor-styles-wrapper h1', 'font-size', aui_parseCSS(newStyles, 'h1', 'font-size'));
-                aui_updateCssRule('body.editor-styles-wrapper h2', 'font-size', aui_parseCSS(newStyles, 'h2', 'font-size'));
-                aui_updateCssRule('body.editor-styles-wrapper h3', 'font-size', aui_parseCSS(newStyles, 'h3', 'font-size'));
-                aui_updateCssRule('body.editor-styles-wrapper h4', 'font-size', aui_parseCSS(newStyles, 'h4', 'font-size'));
-                aui_updateCssRule('body.editor-styles-wrapper h5', 'font-size', aui_parseCSS(newStyles, 'h5', 'font-size'));
-                aui_updateCssRule('body.editor-styles-wrapper h6', 'font-size', aui_parseCSS(newStyles, 'h6', 'font-size'));
-
-                // ALl Headings
-               aui_updateCssRule('body.editor-styles-wrapper h1, body.editor-styles-wrapper h2, body.editor-styles-wrapper h3, body.editor-styles-wrapper h4, body.editor-styles-wrapper h5, body.editor-styles-wrapper h6', 'font-family', aui_parseCSS(newStyles, 'h1, h2, h3, h4, h5, h6', 'font-family'));
-
-                // individual headings
-                aui_updateCssRule('body.editor-styles-wrapper h1', 'font-family', aui_parseCSS(newStyles, 'h1{', 'font-family'));
-                aui_updateCssRule('body.editor-styles-wrapper h2', 'font-family', aui_parseCSS(newStyles, 'h2{', 'font-family'));
-                aui_updateCssRule('body.editor-styles-wrapper h3', 'font-family', aui_parseCSS(newStyles, 'h3{', 'font-family'));
-                aui_updateCssRule('body.editor-styles-wrapper h4', 'font-family', aui_parseCSS(newStyles, 'h4{', 'font-family'));
-                aui_updateCssRule('body.editor-styles-wrapper h5', 'font-family', aui_parseCSS(newStyles, 'h5{', 'font-family'));
-                aui_updateCssRule('body.editor-styles-wrapper h6', 'font-family', aui_parseCSS(newStyles, 'h6{', 'font-family'));
-
-                // console.log(aui_parseCSS(newStyles, 'h2{', 'font-family'));
-
-                // color
-                aui_updateCssRule('body.editor-styles-wrapper h1, body.editor-styles-wrapper h2, body.editor-styles-wrapper h3, body.editor-styles-wrapper h4, body.editor-styles-wrapper h5, body.editor-styles-wrapper h6', 'color', aui_parseCSS(newStyles, 'h1, h2, h3, h4, h5, h6', 'color'));
-
-                aui_updateCssRule('body.editor-styles-wrapper h1', 'color', aui_parseCSS(newStyles, 'h1{', 'color'));
-                aui_updateCssRule('body.editor-styles-wrapper h2', 'color', aui_parseCSS(newStyles, 'h2{', 'color'));
-                aui_updateCssRule('body.editor-styles-wrapper h3', 'color', aui_parseCSS(newStyles, 'h3{', 'color'));
-                aui_updateCssRule('body.editor-styles-wrapper h4', 'color', aui_parseCSS(newStyles, 'h4{', 'color'));
-                aui_updateCssRule('body.editor-styles-wrapper h5', 'color', aui_parseCSS(newStyles, 'h5{', 'color'));
-                aui_updateCssRule('body.editor-styles-wrapper h6', 'color', aui_parseCSS(newStyles, 'h6{', 'color'));
-
-
-
-                //background
-                aui_updateCssRule('body.editor-styles-wrapper h1, body.editor-styles-wrapper h2, body.editor-styles-wrapper h3, body.editor-styles-wrapper h4, body.editor-styles-wrapper h5, body.editor-styles-wrapper h6', 'background', aui_parseCSS(newStyles, 'h1, h2, h3, h4, h5, h6', 'background'));
-
-                aui_updateCssRule('body.editor-styles-wrapper h1', 'background', aui_parseCSS(newStyles, 'h1{', 'background'));
-                aui_updateCssRule('body.editor-styles-wrapper h2', 'background', aui_parseCSS(newStyles, 'h2{', 'background'));
-                aui_updateCssRule('body.editor-styles-wrapper h3', 'background', aui_parseCSS(newStyles, 'h3{', 'background'));
-                aui_updateCssRule('body.editor-styles-wrapper h4', 'background', aui_parseCSS(newStyles, 'h4{', 'background'));
-                aui_updateCssRule('body.editor-styles-wrapper h5', 'background', aui_parseCSS(newStyles, 'h5{', 'background'));
-                aui_updateCssRule('body.editor-styles-wrapper h6', 'background', aui_parseCSS(newStyles, 'h6{', 'background'));
-
-
-
-                //                console.log('Font size of h2 is:', fontSize);
-            }
-
-            // update the newStyles variable.
-            Styles = newStyles;
-
-
         });
     }
 
     setTimeout(function(){
-        aui_sync_admin_styles();
-    }, 10000);
-
-    function aui_sync_admin_styles(){
         aui_fse_sync_site_colors('primary');
         aui_fse_sync_site_colors('danger');
         aui_fse_sync_site_colors('warning');
         aui_fse_sync_site_colors('info');
-        aui_fse_sync_site_typography();
-    }
-
-    // setTimeout(function(){
-    //     aui_listen_global_style_click();
-    // }, 3000);
-    //
-    // function aui_listen_global_style_click(){
-    //     setTimeout(function(){
-    //         // check for global stylebook clicks
-    //         jQuery('.interface-pinned-items button').click(function() {
-    //             aui_listen_stylebook_click();
-    //         });
-    //     }, 500);
-    // }
-    //
-    //
-    //
-    // function aui_listen_stylebook_click(){
-    //     setTimeout(function(){
-    //         // check for global stylebook clicks
-    //         jQuery('.edit-site-global-styles-sidebar__header .components-button.has-icon').click(function() {
-    //             setTimeout(function(){
-    //                 aui_sync_admin_styles();
-    //             }, 500);
-    //         });
-    //     }, 500);
-    // }
-
-
-
-
-    function aui_parseCSS(cssString, selector, property) {
-        // Split the CSS string on closing braces
-        const rules = cssString.split('}');
-
-        // Search for the selector and property
-        for (let rule of rules) {
-            if (rule.includes(selector) && rule.includes(property)) {
-                // Extract the rule's content
-                const ruleContent = rule.split('{')[1];
-
-                // Split properties and search for the desired property
-                const properties = ruleContent.split(';');
-                for (let prop of properties) {
-                    if (prop.includes(property)) {
-                        // Extract and return the property value
-                        return prop.split(':')[1].trim();
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
-    // Function to update a CSS rule
-    function aui_updateCssRule(selector, property, value) {
-        // check fi we are viewing stylebook
-
-        var aui_inline_css = jQuery(".edit-site-visual-editor__editor-canvas").contents().find("#ayecode-ui-fse-inline-css").get(0);
-        var aui_inline_css_stylebook = jQuery(".edit-site-style-book__iframe").contents().find("#ayecode-ui-fse-inline-css").get(0);
-
-        if (aui_inline_css && aui_inline_css.sheet) {
-            var styleSheet = aui_inline_css.sheet;
-        }else if(aui_inline_css_stylebook && aui_inline_css_stylebook.sheet){
-            var styleSheet = aui_inline_css_stylebook.sheet;
-        }else{
-            return;
-        }
-
-        var rules = styleSheet.cssRules || styleSheet.rules;
-
-        // console.log(rules);
-
-        for (var i = 0; i < rules.length; i++) {
-            if (rules[i].selectorText === selector) {
-                rules[i].style[property] = value;
-                // console.log('update rule');
-                return; // Exit the function once the rule is found and updated
-            }
-        }
-
-        // If the rule doesn't exist, optionally add it
-        styleSheet.insertRule(`${selector} { ${property}: ${value}; }`, rules.length);
-        // console.log(`insert rule ${selector}`);
-    }
+    }, 10000);
 
 	<?php } ?>
 

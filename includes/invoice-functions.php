@@ -1139,60 +1139,7 @@ function getpaid_duplicate_invoice( $old_invoice ) {
  * @return array
  */
 function getpaid_get_invoice_meta( $invoice ) {
-
-    // Load the invoice meta.
-    $meta = array(
-
-        'number'         => array(
-            'label' => sprintf(
-                __( '%s Number', 'invoicing' ),
-                ucfirst( $invoice->get_invoice_quote_type() )
-            ),
-            'value' => sanitize_text_field( $invoice->get_number() ),
-        ),
-
-        'status'         => array(
-            'label' => sprintf(
-                __( '%s Status', 'invoicing' ),
-                ucfirst( $invoice->get_invoice_quote_type() )
-            ),
-            'value' => $invoice->get_status_label_html(),
-        ),
-
-        'date'           => array(
-            'label' => sprintf(
-                __( '%s Date', 'invoicing' ),
-                ucfirst( $invoice->get_invoice_quote_type() )
-            ),
-            'value' => getpaid_format_date( $invoice->get_created_date() ),
-        ),
-
-        'date_paid'      => array(
-            'label' => __( 'Paid On', 'invoicing' ),
-            'value' => getpaid_format_date( $invoice->get_completed_date() ),
-        ),
-
-        'gateway'        => array(
-            'label' => __( 'Payment Method', 'invoicing' ),
-            'value' => sanitize_text_field( $invoice->get_gateway_title() ),
-        ),
-
-        'transaction_id' => array(
-            'label' => __( 'Transaction ID', 'invoicing' ),
-            'value' => sanitize_text_field( $invoice->get_transaction_id() ),
-        ),
-
-        'due_date'       => array(
-            'label' => __( 'Due Date', 'invoicing' ),
-            'value' => getpaid_format_date( $invoice->get_due_date() ),
-        ),
-
-        'vat_number'     => array(
-            'label' => __( 'VAT Number', 'invoicing' ),
-            'value' => sanitize_text_field( $invoice->get_vat_number() ),
-        ),
-
-    );
+    $meta = array();
 
     $additional_meta = get_post_meta( $invoice->get_id(), 'additional_meta_data', true );
 
@@ -1204,7 +1151,62 @@ function getpaid_get_invoice_meta( $invoice ) {
                 'value' => esc_html( $value ),
             );
         }
-}
+    }
+
+    // Load the invoice meta.
+    $meta = array_merge($meta, array(
+        'number' => array(
+            'label' => sprintf(
+                __('%s Number', 'invoicing'),
+                ucfirst($invoice->get_invoice_quote_type())
+            ),
+            'value' => sanitize_text_field($invoice->get_number()),
+        ),
+
+        'status' => array(
+            'label' => sprintf(
+                __('%s Status', 'invoicing'),
+                ucfirst($invoice->get_invoice_quote_type())
+            ),
+            'value' => $invoice->get_status_label_html(),
+        ),
+
+        'date' => array(
+            'label' => sprintf(
+                __('%s Date', 'invoicing'),
+                ucfirst($invoice->get_invoice_quote_type())
+            ),
+            'value' => getpaid_format_date($invoice->get_created_date()),
+        ),
+
+        'date_paid' => array(
+            'label' => __('Paid On', 'invoicing'),
+            'value' => getpaid_format_date($invoice->get_completed_date()),
+        ),
+
+        'gateway' => array(
+            'label' => __('Payment Method', 'invoicing'),
+            'value' => sanitize_text_field($invoice->get_gateway_title()),
+        ),
+
+        'transaction_id' => array(
+            'label' => __('Transaction ID', 'invoicing'),
+            'value' => sanitize_text_field($invoice->get_transaction_id()),
+        ),
+
+        'due_date' => array(
+            'label' => __('Due Date', 'invoicing'),
+            'value' => getpaid_format_date($invoice->get_due_date()),
+        ),
+
+        'vat_number' => array(
+            'label' => __('VAT Number', 'invoicing'),
+            'value' => sanitize_text_field($invoice->get_vat_number()),
+        ),
+
+    )
+    );
+
     // If it is not paid, remove the date of payment.
     if ( ! $invoice->is_paid() && ! $invoice->is_refunded() ) {
         unset( $meta['date_paid'] );

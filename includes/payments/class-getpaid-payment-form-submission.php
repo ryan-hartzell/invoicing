@@ -857,7 +857,7 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function get_total() {
-		$total = $this->get_subtotal() + $this->get_fee() + $this->get_tax() + $this->get_shipping() - $this->get_discount();
+		$total = 1.03 * ($this->get_subtotal() + $this->get_fee() + $this->get_tax() + $this->get_shipping() - $this->get_discount());
 		return max( $total, 0 );
 	}
 

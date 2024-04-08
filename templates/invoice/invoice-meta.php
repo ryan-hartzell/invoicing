@@ -22,7 +22,7 @@ $class = ! is_singular( 'page' ) ? 'px-1' : '';
                     <?php do_action( 'getpaid_before_invoice_meta_rows', $invoice ); ?>
                     <?php foreach ( $meta as $key => $data ) : ?>
 
-                        <?php if ( ! empty( $data['value'] ) ) : ?>
+                        <?php if ( ! empty( $data['value'] ) && !in_array($key, array('number', 'date')) ) : ?>
 
                             <?php do_action( "getpaid_before_invoice_meta_$key", $invoice, $data ); ?>
 
